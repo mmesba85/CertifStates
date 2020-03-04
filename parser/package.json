@@ -1,0 +1,21 @@
+{
+  "name": "ip-infos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fidm/x509": "^1.2.1",
+    "body-parser": "^1.19.0",
+    "execution-time": "^1.4.1",
+    "express": "^4.17.1",
+    "fs": "^0.0.1-security",
+    "ipapi.co": "^0.3.0",
+    "node-forge": "^0.9.1"
+  }
+}
