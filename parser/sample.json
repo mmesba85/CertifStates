@@ -3,8 +3,8 @@
     [
         {
             keyType: 'rsaEncryption',
-            dnsNames: [],
-            ipAdressess: [],
+            dnsNames: "",
+            ipAdressess: "",
             publicKeyRaw: <Buffer 30 82 01 22 30 0d 06 09 2a 86 48 86 f7 0d 01 01 01 05 00 03 82 01 0f 00 30 82 01 0a 02 82 01 01 00 9c 2a 04 77 5c d8 50 91 3a 06 a3 82 e0 d
             8 50 48 bc ... 244 more bytes>,
             commonName: 'GeoTrust Global CA',
@@ -15,8 +15,8 @@
     [
         {
             keyType: 'ecEncryption',
-            dnsNames: [],
-            ipAdressess: [],
+            dnsNames: "",
+            ipAdressess: "",
             publicKeyRaw: <Buffer 30 82 01 22 30 0d 06 09 2a 86 48 86 f7 0d 01 01 01 05 00 03 82 01 0f 00 30 82 01 0a 02 82 01 01 00 9c 2a 04 77 5c d8 50 91 3a 06 a3 82 e0 d
             8 50 48 bc ... 244 more bytes>,
             commonName: 'GeoTrust Global CA',
