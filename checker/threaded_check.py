@@ -2,14 +2,30 @@ import pandas
 import json
 from celery import Celery
 import os
-import threading
+from threading import Thread
 
 DATA_FILE='sample.json'
 
 app = Celery('CheckCol',
              broker='pyamqp://guest@localhost//')
 
-@app.task
+
+class ThreadWithReturnValue(Thread):
+    def __init__(self, group=None, target=None, name=None, args=(), kwargs=None, *, daemon=None):
+        Thread.__init__(self, group, target, name, args, kwargs, daemon=daemon)
+
+        self._return = None
+
+    def run(self):
+        if self._target is not None:
+            self._return = self._target(*self._args, **self._kwargs)
+
+    def join(self):
+        Thread.join(self)
+        return self._return
+
+
+
 def find_duplicates(val, data):
     res = []
     for i, r in data.iterrows():
@@ -32,9 +48,11 @@ def process_data():
         if v in d:
             continue
         d.add(v)
-
-        worker = threading.Thread(target=find_duplicates, args=(v, aux))
+        worker = ThreadWithReturnValue(target=find_duplicates, args=(v, aux))
         worker.start()
+        check = worker.join()
 
         check.append(r.to_dict())
         print(res)
+
+process_data()
