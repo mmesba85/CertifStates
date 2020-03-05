@@ -1,0 +1,24 @@
+{
+    "ab":
+    {
+          "keyType":"rsaEncryption",
+          "dnsNames":"titi",
+          "ipAdressess":"titi",
+          "publicKeyRaw":"30 82 01 22 30 0d 06",
+          "commonName":"GeoTrust Global CA",
+          "countryName":"US"
+    },
+    "cd":
+    {
+          "keyType":"ecEncryption",
+          "dnsNames":[
+             "titi"
+          ],
+          "ipAdressess":[
+             "titi"
+          ],
+          "publicKeyRaw":"30 82 01 22 30 0d 06",
+          "commonName":"GeoTrust Global CA",
+          "countryName":"US"
+    }
+ }
