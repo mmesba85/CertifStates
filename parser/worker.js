@@ -7,19 +7,19 @@ perf.start();
 const pemDirectory = cleanDirname(process.argv[2]);
 
 const json = {
-    rsa: [],
-    ecc: []
+    certificat: [],
 }
 
 
-process.env.UV_
-fs.readdir(pemDirectory, (err, files) => {
 
+fs.readdir(pemDirectory, (err, files) => {
+    var idCert = 1;
     files.forEach(file => {
 
         var pathFile = pemDirectory + "/" + file
         const issuer = Certificate.fromPEM(fs.readFileSync(pathFile));
         const parsedCert = {
+            id: idCert,
             keyType: issuer.publicKey.algo,
             dnsNames: issuer.dnsNames.toString(),
             ipAdressess: issuer.ipAddresses.toString(),
@@ -27,14 +27,9 @@ fs.readdir(pemDirectory, (err, files) => {
             commonName: issuer.issuer.commonName,
             countryName: issuer.issuer.countryName
         }
-
-        if (parsedCert.keyType == "rsaEncryption") {
-            json.rsa.push(parsedCert)
-        }
-        else {
-            json.ecc.push(parsedCert)
-        }
-
+        
+        json.certificat.push(parsedCert)
+        idCert++;
     });
 
     console.log(json);
@@ -44,7 +39,6 @@ fs.readdir(pemDirectory, (err, files) => {
 
     const result_perf = perf.stop();
 
-    console.log("\n-------------------------------------\n")
     console.log("Execution time: " + result_perf.words);
 
     return json;

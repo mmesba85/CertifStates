@@ -1,56 +1,56 @@
+const fs = require('fs');
+const { Certificate } = require('@fidm/x509');
+const perf = require('execution-time')();
 
-import { Executors } from "node-threadpool";
-const {Executors } = require("node-threadpool")
- 
-const pool = Executors.newFixedThreadPool(1);
-const result = pool.submit(async () => "hello world");
- 
-console.log(await result);
+perf.start();
+
+const pemDirectory = cleanDirname(process.argv[2]);
+
+const json = {
+    certificat: [],
+}
 
 
-// 'use strict'
 
-// const { Worker } = require('worker_threads')
+fs.readdir(pemDirectory, (err, files) => {
+    var idCert = 1;
+    files.forEach(file => {
 
-// /**
-// * Use a worker via Worker Threads module to make intensive CPU task
-// * @param filepath string relative path to the file containing intensive CPU task code
-// * @return {Promise(mixed)} a promise that contains result from intensive CPU task
-// */
+        var pathFile = pemDirectory + "/" + file
+        const issuer = Certificate.fromPEM(fs.readFileSync(pathFile));
+        const parsedCert = {
+            id: idCert,
+            keyType: issuer.publicKey.algo,
+            dnsNames: issuer.dnsNames.toString(),
+            ipAdressess: issuer.ipAddresses.toString(),
+            publicKeyRaw: issuer.publicKeyRaw,
+            commonName: issuer.issuer.commonName,
+            countryName: issuer.issuer.countryName
+        }
+        
+        json.certificat.push(parsedCert)
+        idCert++;
+    });
 
-// function _useWorker (filepath, argument) {
+    console.log(json);
 
-//   return new Promise((resolve, reject) => {
+    let data = JSON.stringify(json);
+    fs.writeFileSync('certificat.json', data);
 
-//     const worker = new Worker(filepath, {argv: [argument]})
-//     worker.on('online', () => { console.log('Launching intensive CPU task') })
+    const result_perf = perf.stop();
 
-//     worker.on('message', messageFromWorker => {
-//       console.log(messageFromWorker)
-//       return resolve
-//     })
+    console.log("Execution time: " + result_perf.words);
 
-//     worker.on('error', reject)
-//     worker.on('exit', code => {
+    return json;
 
-//       if (code !== 0) {
-//         reject(new Error(`Worker stopped with exit code ${code}`))
-//       }
+});
 
-//     })
-//   })
-// }
 
-// /**
-// * Use main thread while making intensive CPU task on worker
-// */
-
-// async function main () {
-
-//   // this log will happen every second during and after the intensive task, main thread is never blocked
-
-//   setInterval(() => { console.log('Event loop on main thread is not blocked right now') }, 1000)
-//   await _useWorker('./worker.js', process.argv[3])
-// }
-
-// main()
+function cleanDirname(dir) {
+    if(dir[dir.length - 1] === '/') {
+        return dir.slice(0, -1)
+    }
+    else {
+        return dir;
+    }
+}
