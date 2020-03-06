@@ -23,11 +23,10 @@ fs.readdir(pemDirectory, (err, files) => {
             keyType: issuer.publicKey.algo,
             dnsNames: issuer.dnsNames.toString(),
             ipAdressess: issuer.ipAddresses.toString(),
-            publicKeyRaw: issuer.publicKeyRaw,
+            publicKey: Buffer.from(issuer.publicKey.toJSON().publicKey.toJSON().data).toString('hex'),
             commonName: issuer.issuer.commonName,
             countryName: issuer.issuer.countryName
         }
-        
         json.certificat.push(parsedCert)
         idCert++;
     });
