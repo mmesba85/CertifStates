@@ -27,10 +27,11 @@ class ThreadWithReturnValue(Thread):
 
 
 def find_duplicates(val, data):
-    res = []
+    column_names = list(data.columns.values)
+    res = data.loc[:, column_names]
     for i, r in data.iterrows():
         if str(r['publicKeyRaw']) == str(val):
-            res.append(r.to_dict())
+            res.append(r, ignore_index=True)
     return res
 
 
@@ -40,7 +41,7 @@ def process_data():
     res = pandas.DataFrame(data)
     aux = res.transpose()
 
-
+    l = []
     d = set()
     for i, r in aux.iterrows():
         v = r['publicKeyRaw']
@@ -52,7 +53,9 @@ def process_data():
         worker.start()
         check = worker.join()
 
-        check.append(r.to_dict())
-        print(res)
+        check.append(r, ignore_index=True)
+        l.append(check)
+    return l
+            
 
 process_data()
