@@ -1,4 +1,8 @@
+# JS
 node_modules/
 
 # PyCharm settings
 **/.idea/*
+
+# Python
+venv/*
