@@ -1,0 +1,46 @@
+{
+  "1": {
+    "keyType": "rsaEncryption",
+    "dnsNames": "dns1",
+    "ipAdressess": "192.1.1.1",
+    "publicKeyRaw": "1",
+    "commonName": "Test 1",
+    "countryName": "FR"
+  },
+  "4": {
+    "keyType": "rsaEncryption",
+    "dnsNames": "dns4",
+    "ipAdressess": "492.4.4.4",
+    "publicKeyRaw": "2",
+    "commonName": "Test 4",
+    "countryName": "FR"
+  },
+  "2": {
+    "keyType": "ecEncryption",
+    "dnsNames": [
+      "dns2"
+    ],
+    "ipAdressess": [
+      "192.1.1.2"
+    ],
+    "publicKeyRaw": "2",
+    "commonName": "",
+    "countryName": ""
+  },
+  "3": {
+    "keyType": "rsaEncryption",
+    "dnsNames": "dns3",
+    "ipAdressess": "392.3.3.3",
+    "publicKeyRaw": "1",
+    "commonName": "Test 3",
+    "countryName": "FR"
+  },
+  "5": {
+    "keyType": "rsaEncryption",
+    "dnsNames": "dns5",
+    "ipAdressess": "592.5.5.5",
+    "publicKeyRaw": "55",
+    "commonName": "Test 5",
+    "countryName": "FR"
+  }
+}
