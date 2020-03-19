@@ -26,12 +26,13 @@ class ThreadWithReturnValue(Thread):
 
 
 
-def find_duplicates(val, data):
+def find_duplicates(val, data, row):
     column_names = list(data.columns.values)
-    res = data.loc[:, column_names]
+    res = pandas.DataFrame(columns=column_names)
     for i, r in data.iterrows():
         if str(r['publicKeyRaw']) == str(val):
-            res.append(r, ignore_index=True)
+            if not r.equals(row):
+                res.loc[len(res)] = r
     return res
 
 
@@ -49,12 +50,12 @@ def process_data():
         if v in d:
             continue
         d.add(v)
-        worker = ThreadWithReturnValue(target=find_duplicates, args=(v, aux))
+        worker = ThreadWithReturnValue(target=find_duplicates, args=(v, aux, r))
         worker.start()
         check = worker.join()
-
-        check.append(r, ignore_index=True)
-        l.append(check)
+        if not check.empty:
+            check.loc[len(check)] = r
+            l.append(check)
     return l
             
 
