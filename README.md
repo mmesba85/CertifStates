@@ -3,7 +3,11 @@ Certificates State
 
 # Get `n` certificates from a 7GB certificates directory
 
+EPITA's security lab gave us 7GB of x509 certificate files.
+
 Opening such a huge directory might make your file explorer crash/freeze.
+
+To extract `n` certificates from the directory, we used the following shell script.
 
 ![](https://i.imgur.com/H4EICAS.png)
 

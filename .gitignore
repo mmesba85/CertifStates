@@ -7,3 +7,6 @@ node_modules/
 # Python
 venv/*
 **/__pycache__/*
+
+*.pdf
+*.html

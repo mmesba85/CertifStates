@@ -1,11 +1,50 @@
-Public key collisions analysis
+Documentation Synthesis
 ===
 
-# `dig`: Get an IP address from a domain name and vice versa 
+# Get `n` certificates from a 7GB certificates directory
+
+EPITA's security lab gave us 7GB of x509 certificate files.
+
+Opening such a huge directory might make your file explorer crash/freeze.
+
+To extract `n` certificates from the directory, we used the following shell script.
+
+![](https://i.imgur.com/H4EICAS.png)
+
+```shell script
+# copy_certificates.sh
+
+for i in $(cat certificate_filenames.txt); do
+    echo $i
+    cp ../cert/$i ./sample_certificates/
+done
+```
+
+This script copies 500 certificates from `../cert/` to `./sample_certificates/`.
+
+# How to run x509 certificates parser
+
+## Install
+
+Run the following command line in `./parser` directory.
+
+```
+npm install
+```
+
+## Run script 
+
+```
+node index.js certificates_directory/
+```
+
+# Public key collisions analysis
+
+## `dig`: Get an IP address from a domain name and vice versa 
 
 > nslookup and dnspython could work as well.
 
-## Domain name to IP address
+### Domain name to IP address
 
 ```
 ➜  /tmp dig -q google.com                        
@@ -37,7 +76,7 @@ And we get an answer!
 ;; ANSWER SECTION:
 google.com.		63	IN	A	216.58.209.238
 ```
-## IP address to domain name
+### IP address to domain name
 
 ```
 ➜  /tmp dig -x 8.8.8.8
@@ -66,7 +105,7 @@ And voila !
 
 `8.8.8.8.in-addr.arpa.	6567	IN	PTR	dns.google.`
 
-# `whois`: Get ASN (Autonomous System Number) from IP address
+## `whois`: Get ASN (Autonomous System Number) from IP address
 
 An ASN will tell us on which part of the Internet the website is located.
 
