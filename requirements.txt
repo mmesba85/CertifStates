@@ -1,2 +1,6 @@
 pandas==1.0.1
-whois==0.9.6
+
+dnspython
+ipwhois
+
+pytest
