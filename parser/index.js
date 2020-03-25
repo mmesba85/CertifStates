@@ -30,7 +30,7 @@ fs.readdir(pemDirectory, (err, files) => {
 
     console.log(json)
     let data = JSON.stringify(json);
-    fs.writeFileSync('certificat.json', data);
+    fs.writeFileSync('certificat-10k.json', data);
 
     const result_perf = perf.stop();
 
