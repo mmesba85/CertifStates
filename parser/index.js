@@ -1,16 +1,13 @@
 const fs = require('fs');
 const { Certificate } = require('@fidm/x509');
 const perf = require('execution-time')();
+var forge = require('node-forge');
 
 perf.start();
 
 const pemDirectory = cleanDirname(process.argv[2]);
 
-const json = {
-    certificat: [],
-}
-
-
+const json = {}
 
 fs.readdir(pemDirectory, (err, files) => {
     var idCert = 1;
@@ -18,21 +15,20 @@ fs.readdir(pemDirectory, (err, files) => {
 
         var pathFile = pemDirectory + "/" + file
         const issuer = Certificate.fromPEM(fs.readFileSync(pathFile));
+
         const parsedCert = {
-            id: idCert,
             keyType: issuer.publicKey.algo,
-            dnsNames: issuer.dnsNames.toString(),
-            ipAdressess: issuer.ipAddresses.toString(),
-            publicKey: Buffer.from(issuer.publicKey.toJSON().publicKey.toJSON().data).toString('hex'),
+            dnsNames: issuer.dnsNames.toString().split(','),
+            ipAdressess: issuer.ipAddresses.toString().split(','),
+            publicKeyRaw: Buffer.from(issuer.publicKey.toJSON().publicKey.toJSON().data).toString('hex'),
             commonName: issuer.issuer.commonName,
             countryName: issuer.issuer.countryName
         }
-        json.certificat.push(parsedCert)
+        json[idCert] = parsedCert
         idCert++;
     });
 
-    console.log(json);
-
+    console.log(json)
     let data = JSON.stringify(json);
     fs.writeFileSync('certificat.json', data);
 
