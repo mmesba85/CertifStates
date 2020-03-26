@@ -89,7 +89,6 @@ if __name__ == '__main__':
 
         collisions.at[i, 'asn'] = asn.get('asn')
         collisions.at[i, 'asnRegistry'] = asn.get('asn_registry')
-        collisions.at[i, 'arin'] = asn.get('arin')
         collisions.at[i, 'asnCidr'] = asn.get('asn_cidr')
         collisions.at[i, 'asnCountryCode'] = asn.get('asn_country_code')
         collisions.at[i, 'asnDate'] = asn.get('asn_date')
