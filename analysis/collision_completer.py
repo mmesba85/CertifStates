@@ -1,5 +1,8 @@
+import json
+import logging
 import sys
-from typing import Dict, TypedDict
+import time
+from typing import Dict, TypedDict, List
 
 import dns.resolver
 import dns.reversename
@@ -8,8 +11,17 @@ from ipwhois.net import Net
 from ipwhois.asn import IPASN
 
 import pandas as pd
+from pandas import DataFrame
 
 from collision import Collision
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%m/%d/%Y %I:%M:%S %p',
+    stream=sys.stdout
+)
+logger = logging.getLogger(__name__)
 
 
 class ASNLookup(TypedDict):
@@ -58,43 +70,57 @@ def ip_asn_lookup(ip: str) -> Dict:
 
 
 if __name__ == '__main__':
-    filepath = sys.argv[0]
-    filepath = '..\checker\output.json'
-    collisions: pd.DataFrame = pd.read_json(filepath)
-    print(collisions)
-    for i, j in collisions.iterrows():
-        collision: Collision = j.to_dict()
+    start_time = time.time()
 
-        # ipAdressess and dnsNames could be either a string or a list of strings
-        ip = collision.get('ipAdressess')
-        if isinstance(ip, list):
-            ip = ip[0]
+    filepath = sys.argv[1] if len(sys.argv) > 1 else '..\collisions_em.json'
 
-        domain = collision.get('dnsNames')
-        if isinstance(domain, list):
-            domain = domain[0]
+    collisions = None
+    with open(filepath, 'r', encoding='utf-8') as file:
+        collisions: List = json.load(file)
 
-        # Get ip or domain if missing
-        if ip is None and domain is not None:
-            ip = get_ip_from_domain(domain)
-        elif domain is None and ip is not None:
-            domain = get_domain_from_ip(ip)
+    results: List[Dict] = []
 
-        collisions.at[i, 'ipAdressess'] = ip
-        collisions.at[i, 'dnsNames'] = domain
+    for collisions_dict in collisions:  # each row is a collision dataframe
+        collisions_df: DataFrame = pd.DataFrame.from_dict(collisions_dict).transpose()
+        for index, row in collisions_df.iterrows():
+            collision: Collision = row.to_dict()
 
-        asn = {}
-        if ip is not None:
-            asn: ASNLookup = ip_asn_lookup(ip)
+            # ipAdressess and dnsNames could be either a string or a list of strings
+            ip = collision.get('ipAdressess')
+            if isinstance(ip, list):
+                ip = ip[0]
 
-        collisions.at[i, 'asn'] = asn.get('asn')
-        collisions.at[i, 'asnRegistry'] = asn.get('asn_registry')
-        collisions.at[i, 'asnCidr'] = asn.get('asn_cidr')
-        collisions.at[i, 'asnCountryCode'] = asn.get('asn_country_code')
-        collisions.at[i, 'asnDate'] = asn.get('asn_date')
-        collisions.at[i, 'asnDescription'] = asn.get('asn_description')
+            domain = collision.get('dnsNames')
+            if isinstance(domain, list):
+                domain = domain[0]
 
-    for i, j in collisions.iterrows():
-        print(j)
+            # Get ip or domain if missing
+            if not ip and domain:
+                logger.debug('Missing IP address for domain %s', domain)
 
-    collisions.to_json('collisions_completed.json')
+                ip = get_ip_from_domain(domain)
+            elif not domain and ip:
+                logger.debug('Missing domain for IP %s', ip)
+
+                domain = get_domain_from_ip(ip)
+
+            collisions_df.at[index, 'ipAdressess'] = ip
+            collisions_df.at[index, 'dnsNames'] = domain
+
+            asn = {}
+            if ip is not None:
+                asn: ASNLookup = ip_asn_lookup(ip)
+
+            collisions_df.at[index, 'asn'] = asn.get('asn')
+            collisions_df.at[index, 'asnRegistry'] = asn.get('asn_registry')
+            collisions_df.at[index, 'asnCidr'] = asn.get('asn_cidr')
+            collisions_df.at[index, 'asnCountryCode'] = asn.get('asn_country_code')
+            collisions_df.at[index, 'asnDate'] = asn.get('asn_date')
+            collisions_df.at[index, 'asnDescription'] = asn.get('asn_description')
+
+        results.append(collisions_df.transpose().to_dict())
+
+    with open('collisions_maroua_completed.json', 'w', encoding='utf-8') as file:
+        json.dump(results, file)
+
+    logger.info("--- ASN, IP and DNS lookups took %s seconds to complete. ---" % (time.time() - start_time))

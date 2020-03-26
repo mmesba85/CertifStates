@@ -89,3 +89,12 @@ AS      | IP               | BGP Prefix          | CC | Registry | Allocated  | 
 ```
 
 `google.com` ASN number is `15169`.
+
+# Collision completer sources
+
+* http://www.dnspython.org/
+* https://stackoverflow.com/questions/49598223/how-can-i-query-all-ips-for-a-domain-using-dnspython
+* https://github.com/relip/python-whois
+* https://github.com/secynic/ipwhois (better python whois -h alternative)
+* https://ipwhois.readthedocs.io/en/latest/RDAP.html
+* https://ipwhois.readthedocs.io/en/latest/ASN.html
