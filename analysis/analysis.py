@@ -21,7 +21,7 @@ from collections import Counter
 
 if __name__ == '__main__':
     # filepath = sys.argv[0]
-    filepath = './collisions_completed'
+    filepath = './collisions_completed.json'
     collisions: pd.DataFrame = pd.read_json(filepath)
     print(collisions)
 
@@ -31,7 +31,7 @@ if __name__ == '__main__':
     for ip, c in ip_asn_counter:
         for k, v in c.items():
             g.add_edge(ip, k, weight=v)
-            
+
     pos = nx.spring_layout(g)
     plt.figure(3, figsize=(10, 10))
     nx.draw(g, pos, with_labels=True)
