@@ -1,5 +1,5 @@
 import sys
-from typing import Dict
+from typing import Dict, TypedDict
 
 import dns.resolver
 import dns.reversename
@@ -27,6 +27,27 @@ def get_ip_from_domain(domain: str) -> str:
 def get_domain_from_ip(ip: str) -> str:
     ip = dns.reversename.from_address(ip)
     return dns.resolver.query(ip, "PTR")[0]
+
+
+class ASNLookup(TypedDict):
+    """
+    ASN Lookup function return type description
+    Example: {'asn_registry': 'arin', 'asn': '15169', 'asn_cidr': '8.8.8.0/24', 'asn_country_code': 'US', 'asn_date': '1992-12-01', 'asn_description': 'GOOGLE, US'}
+        {
+            'asn_registry': 'arin',
+            'asn': '15169',
+            'asn_cidr': '8.8.8.0/24',
+            'asn_country_code': 'US',
+            'asn_date': '1992-12-01',
+            'asn_description': 'GOOGLE, US'
+        }
+    """
+    asn_registry: str
+    asn: str
+    asn_cidr: str
+    asn_country_code: str
+    asn_date: str
+    asn_description: str
 
 
 def ip_asn_lookup(ip: str) -> Dict:
@@ -62,5 +83,18 @@ if __name__ == '__main__':
         collisions.at[i, 'ipAdressess'] = ip
         collisions.at[i, 'dnsNames'] = domain
 
+        asn = {}
+        if ip is not None:
+            asn: ASNLookup = ip_asn_lookup(ip)
+
+        collisions.at[i, 'asnRegistry'] = asn.get('asn_registry')
+        collisions.at[i, 'arin'] = asn.get('arin')
+        collisions.at[i, 'asnCidr'] = asn.get('asn_cidr')
+        collisions.at[i, 'asnCountryCode'] = asn.get('asn_country_code')
+        collisions.at[i, 'asnDate'] = asn.get('asn_date')
+        collisions.at[i, 'asnDescription'] = asn.get('asn_description')
+
     for i, j in collisions.iterrows():
         print(j)
+
+    collisions.to_json('collisions_completed.json')
