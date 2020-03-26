@@ -1,15 +1,13 @@
-from dataclasses import dataclass
-from typing import List, Union
+from typing import List, Union, TypedDict
 
 
-@dataclass
-class Collision:
+class Collision(TypedDict):
     """
     Collision object, returned by `checker` module in a list of pandas' data frames
     """
     keyType: str
-    dnsNames: Union[List[str], str]  # TODO ask Mus if this can really be a list ?
-    ipAdressess: Union[List[str], str]  # TODO same as above
+    dnsNames: Union[List[str], str]
+    ipAdressess: Union[List[str], str]
     publicKeyRaw: str
     commonName: str
     countryName: str
