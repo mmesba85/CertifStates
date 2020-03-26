@@ -8,6 +8,7 @@ perf.start();
 const pemDirectory = cleanDirname(process.argv[2]);
 
 const json = {}
+const doubleChecker = []
 
 fs.readdir(pemDirectory, (err, files) => {
     var idCert = 1;
@@ -26,10 +27,12 @@ fs.readdir(pemDirectory, (err, files) => {
                 countryName: issuer.issuer.countryName
             }
 
-            console.log(idCert)
-
-            json[idCert] = parsedCert
-            idCert++;
+            if (!doubleChecker.includes(JSON.stringify(parsedCert))) {
+                json[idCert] = parsedCert
+                idCert++;
+                doubleChecker.push(JSON.stringify(parsedCert))
+            }
+            
         }
         catch (err) {
             console.log(err)
@@ -37,6 +40,7 @@ fs.readdir(pemDirectory, (err, files) => {
 
     });
 
+    
     let data = JSON.stringify(json);
     fs.writeFileSync('certificat.json', data);
 
