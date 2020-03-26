@@ -14,23 +14,31 @@ fs.readdir(pemDirectory, (err, files) => {
     files.forEach(file => {
 
         var pathFile = pemDirectory + "/" + file
-        const issuer = Certificate.fromPEM(fs.readFileSync(pathFile));
+        try {
+            const issuer = Certificate.fromPEM(fs.readFileSync(pathFile));
 
-        const parsedCert = {
-            keyType: issuer.publicKey.algo,
-            dnsNames: issuer.dnsNames.toString().split(','),
-            ipAdressess: issuer.ipAddresses.toString().split(','),
-            publicKeyRaw: Buffer.from(issuer.publicKey.toJSON().publicKey.toJSON().data).toString('hex'),
-            commonName: issuer.issuer.commonName,
-            countryName: issuer.issuer.countryName
+            const parsedCert = {
+                keyType: issuer.publicKey.algo,
+                dnsNames: issuer.dnsNames.toString().split(','),
+                ipAdressess: issuer.ipAddresses.toString().split(','),
+                publicKeyRaw: Buffer.from(issuer.publicKey.toJSON().publicKey.toJSON().data).toString('hex'),
+                commonName: issuer.issuer.commonName,
+                countryName: issuer.issuer.countryName
+            }
+
+            console.log(idCert)
+
+            json[idCert] = parsedCert
+            idCert++;
         }
-        json[idCert] = parsedCert
-        idCert++;
+        catch (err) {
+            console.log(err)
+        }
+
     });
 
-    console.log(json)
     let data = JSON.stringify(json);
-    fs.writeFileSync('certificat-10k.json', data);
+    fs.writeFileSync('certificat.json', data);
 
     const result_perf = perf.stop();
 
