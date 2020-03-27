@@ -1,6 +1,6 @@
 import pandas
 import json
-import syssss
+import sys
 from concurrent.futures import ThreadPoolExecutor
 
 # check for file entry
@@ -28,7 +28,7 @@ Main processing function
  - Convert JSON to Dataframe
  - Iterates over rows
  - For each row, get key value and call find_duplicates
- - Convert all duplicates to JSON file
+ - Convert all duplicates to JSON
 '''
 def process_data():
     f = open(DATA_FILE)
@@ -38,7 +38,8 @@ def process_data():
 
     l = []
     d = set()
-    pool = ThreadPoolExecutor(40)
+    pool = ThreadPoolExecutor(max_workers=40)
+    count = 0
     for i, r in aux.iterrows():
         v = r['publicKeyRaw']
 
@@ -46,16 +47,19 @@ def process_data():
             continue
         d.add(v)
        
-        check = pool.submit(find_duplicates, v, aux, r)
+        check = pool.submit(find_duplicates, v, aux.copy(), r)
+        
         
         res = check.result()
         if not res.empty:
             if res.shape[0] == 1:
                 continue
+            count = count + 1
+            print(res)
             l.append(res)
            
     with open("collisions.json", 'w') as outfile:
         outfile.write(json.dumps([df.transpose().to_dict() for df in l]))
-
+    print("Number of collisions: %d" % count)
             
 process_data()
