@@ -1,7 +1,10 @@
 import pandas
 import json
 import sys
-from concurrent.futures import ThreadPoolExecutor
+import time
+from itertools import product
+
+from concurrent.futures import ProcessPoolExecutor
 
 # check for file entry
 if len(sys.argv) < 2:
@@ -18,9 +21,11 @@ Parameter:
 Returns:
     Dataframe containing duplicates
 '''
-def find_duplicates(val, data, row):
-    column_names = list(data.columns.values)
+def find_duplicates(args):
+    val = args[0]
+    data = args[1]
     res = data.loc[data['publicKeyRaw'] == val]
+ 
     return res
 
 '''
@@ -38,7 +43,7 @@ def process_data():
 
     l = []
     d = set()
-    pool = ThreadPoolExecutor(max_workers=40)
+    pool = ProcessPoolExecutor(max_workers=40)
     count = 0
     for i, r in aux.iterrows():
         v = r['publicKeyRaw']
@@ -47,19 +52,15 @@ def process_data():
             continue
         d.add(v)
        
-        check = pool.submit(find_duplicates, v, aux.copy(), r)
-        
-        
-        res = check.result()
-        if not res.empty:
-            if res.shape[0] == 1:
-                continue
-            count = count + 1
-            print(res)
-            l.append(res)
-           
+        checks = pool.map(find_duplicates, [[v, aux.copy()]] , chunksize=1)
+  
+        for c in checks:
+            if len(c) > 1:
+                l.append(c)
+                count = count +1
     with open("collisions.json", 'w') as outfile:
         outfile.write(json.dumps([df.transpose().to_dict() for df in l]))
+    print("Output in collision.json")
     print("Number of collisions: %d" % count)
             
 process_data()
