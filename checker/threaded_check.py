@@ -1,9 +1,6 @@
 import pandas
 import json
 import sys
-import time
-from itertools import product
-
 from concurrent.futures import ProcessPoolExecutor
 
 # check for file entry
@@ -52,7 +49,7 @@ def process_data():
             continue
         d.add(v)
        
-        checks = pool.map(find_duplicates, [[v, aux.copy()]] , chunksize=1)
+        checks = pool.map(find_duplicates, [[v, aux.copy()]] , chunksize=1000)
   
         for c in checks:
             if len(c) > 1:
@@ -60,7 +57,6 @@ def process_data():
                 count = count +1
     with open("collisions.json", 'w') as outfile:
         outfile.write(json.dumps([df.transpose().to_dict() for df in l]))
-    print("Output in collision.json")
-    print("Number of collisions: %d" % count)
+    
             
 process_data()
