@@ -29,8 +29,7 @@ fs.readdir(pemDirectory, (err, files) => {
 
       json[idCert] = parsedCert;
       idCert++;
-      console.log(idCert);
-      
+
     } catch (err) {
       console.log(err);
     }
