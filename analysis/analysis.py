@@ -3,7 +3,9 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 import community
+import json
 
+from typing import Dict, TypedDict, List
 from collections import Counter
 
 # keyType                  rsaEncryption
@@ -20,23 +22,19 @@ from collections import Counter
 # asnDescription              FASTLY, US
 
 if __name__ == '__main__':
-    # filepath = sys.argv[0]
-    filepath = './collisions_completed.json'
-    collisions: pd.DataFrame = pd.read_json(filepath)
-    print(collisions)
+    filepath = sys.argv[1] if len(sys.argv) > 1 else './collisions_completed.json'
 
-    ip_asn_counter = [(ip, Counter(list(collisions[collisions['ipAdressess'] == ip]['asn']))) for ip in collisions]
+    collisions = None
+    with open(filepath, 'r', encoding='utf-8') as file:
+        collisions: List = json.load(file)
 
-    g = nx.Graph()
-    for ip, c in ip_asn_counter:
-        for k, v in c.items():
-            g.add_edge(ip, k, weight=v)
+    results: List[Dict] = []
 
-    pos = nx.spring_layout(g)
-    plt.figure(3, figsize=(10, 10))
-    nx.draw(g, pos, with_labels=True)
+    for collisions_dict in collisions:  # each row is a collision dataframe
+        collisions_df = pd.DataFrame.from_dict(collisions_dict).transpose()
+        print(collisions_df)
 
-
+        
     
     
 
