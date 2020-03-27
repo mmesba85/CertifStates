@@ -31,6 +31,7 @@ fs.readdir(pemDirectory, (err, files) => {
                 json[idCert] = parsedCert
                 idCert++;
                 doubleChecker.push(JSON.stringify(parsedCert))
+                console.log(idCert)
             }
             
         }
@@ -42,6 +43,7 @@ fs.readdir(pemDirectory, (err, files) => {
 
     
     let data = JSON.stringify(json);
+    console.log(doubleChecker.length)
     fs.writeFileSync('certificat.json', data);
 
     const result_perf = perf.stop();
