@@ -1,5 +1,6 @@
 import json
 import sys
+import pandas
 
 def main():
     if len(sys.argv) < 2:
@@ -8,7 +9,6 @@ def main():
     
     with open(sys.argv[1], encoding='utf-8') as fh:
         data = json.load(fh)
-    
     myDict = {}
     founded = set()
     dictFinal = {}
@@ -26,19 +26,28 @@ def main():
                   
     #Now that we have all the colision we need to regroup them by publicKey            
     listIndex = []
-    listFinal = []    
+    listDict = []    
     for i in founded:
-        listT = [dict([(i, data[i])])]        
-        listFinal.append(listT)
+        d = {}
+        d[i] = data[i]       
+        listDict.append(d)
         listIndex.append(data[i]['publicKeyRaw'])     
-        
-    for key,value in dictFinal.items():
-        dictT = dict([(key, value)])
-        i = listIndex.index(value['publicKeyRaw'])                
-        listFinal[i].append(dictT)
-    #output
-    with open("collisions.json", 'w') as fo:
-        fo.write(json.dumps(listFinal))
     
+    for key,value in dictFinal.items():        
+        i = listIndex.index(value['publicKeyRaw'])   
+        dictTemp = listDict[i]
+        dictTemp[key]=value
+        listDict[i] = dictTemp
+    
+    #Manip pas ouf pour avoir le bon output  
+    listDf=[]
+    for d in listDict:
+        res = pandas.DataFrame(d)
+        aux = res.transpose()
+        listDf.append(aux)
+    
+    #output  
+    with open("collisions.json", 'w') as fo:
+        fo.write(json.dumps([df.transpose().to_dict() for df in listDf]))
 if __name__ == "__main__":
     main()
